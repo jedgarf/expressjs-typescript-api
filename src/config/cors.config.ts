@@ -1,5 +1,5 @@
 // Allow requests from a specific domain
-const allowedOrigins = ['https://allhqflix.com'];
+const allowedOrigins: string[] = JSON.parse(process.env.ALLOWED_ORIGIN || '');
 
  const corsConfig: any = {
     origin: function (origin: string, callback: any): void {
