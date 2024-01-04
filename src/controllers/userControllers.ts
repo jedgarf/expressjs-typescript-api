@@ -44,8 +44,8 @@ const add = async (req: Request, res: Response) => {
 
 const show = async (req: Request, res: Response) => {
     
-    const id: unknown = req.params.id;
-    const is_active: unknown = req.query.is_active || 1;
+    const id: number = parseInt(req.params.id);
+    const is_active: unknown = req.query.is_active || '1';
 
     try {
 
