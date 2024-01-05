@@ -1,13 +1,12 @@
 import dotenv from 'dotenv';
+
+// Config
+import * as config from "./api.config";
+
 dotenv.config();
 
-export const apiKey: string = process.env.API_KEY || '';
-
-// 0 means disabled
-export const apicache_min: unknown = process.env.APICACHE_MIN || 0;
-
 // DB Configuration
-if (process.env.NODE_ENV === "PRODUCTION") {
+if (config.env === "PRODUCTION") {
     
     var host: string = process.env.PROD_MYSQL_HOST || '';
     var user: string = process.env.PROD_MYSQL_USER || '';
@@ -43,9 +42,3 @@ export const mysql_password = password;
 export const mysql_db = db;
 export const mysql_dialect = dialect;
 export const mysql_pool = pool;
-
-export const mailer_host: string = process.env.EMAIL_HOST || '';
-export const mailer_port: string = process.env.EMAIL_PORT || '';
-export const mailer_secure: string = process.env.EMAIL_SECURE || '';
-export const mailer_username: string = process.env.EMAIL_USERNAME || '';
-export const mailer_password: string = process.env.EMAIL_PASSWORD || '';

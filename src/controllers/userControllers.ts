@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
+import { hashPassword } from '../utils/passwordUtils';
 
 // Models
-import db from '../models';
+import models from '../models';
 
 const add = async (req: Request, res: Response) => {
 
@@ -14,12 +15,14 @@ const add = async (req: Request, res: Response) => {
     const birth_date: string = req.body.birth_date;
     const is_active: string = req.body.is_active || 1;
 
+    const hashedPassword: string = await hashPassword(password);
+
     try {
 
-        const users = await db.userModel.create({ image_file: image_file, 
+        const users = await models.users.create({ image_file: image_file, 
                                                     username: username, 
                                                     email: email, 
-                                                    password: password, 
+                                                    password: hashedPassword, 
                                                     first_name: first_name, 
                                                     last_name: last_name, 
                                                     birth_date: birth_date, 
@@ -27,16 +30,17 @@ const add = async (req: Request, res: Response) => {
                                                 { fields: ['image_file', 'username', 'email', 'password', 'first_name', 'last_name', 'birth_date', 'is_active'] });
 
         if (users) {
-            res.status(200);
-            res.json({ 'status': true, message: 'Successfully added.', 'inserted_id': users.id });
+            res.status(201).json({ 'status': true, message: 'Successfully added.', 'inserted_id': users.id });
         } else {
-            res.status(400);
-            res.json({ 'status': false, message: "Can't add data." });
+            res.status(400).json({ 'status': false, message: "Can't add data." });
         }
 
-    } catch (error: any) {
-        res.status(500);
-        res.json({ message: error.stack });
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            res.status(500).json({ message: error.stack });
+        } else {
+            console.error('Unexpected error:', error);
+        }
     }
     res.end();
 
@@ -45,29 +49,35 @@ const add = async (req: Request, res: Response) => {
 const show = async (req: Request, res: Response) => {
     
     const id: number = parseInt(req.params.id);
-    const is_active: unknown = req.query.is_active || '1';
+    const is_active: string = req.query.is_active?.toString() || '1';
+    
+    type conditionTypes = {
+        id?: number,
+        is_active: string
+    }
 
     try {
 
         if (id) {
-            let condition: any = { id: id as number, is_active: is_active };
-            var users = await db.userModel.findAll({ where: condition });
+            let condition: conditionTypes = { id: id, is_active: is_active };
+            var users = await models.users.findAll({ where: condition });
         } else {
-            let condition: any = { is_active: is_active };
-            var users = await db.userModel.findAll({ where: condition });
+            let condition: conditionTypes = { is_active: is_active };
+            var users = await models.users.findAll({ where: condition });
         }
 
         if (users.length > 0) {
-            res.status(200);
-            res.json({'data': users});
+            res.status(200).json({'data': users});
         } else {
-            res.status(200);
-            res.json({ message: "No records found." });
+            res.status(200).json({ message: "No records found." });
         }
 
-    } catch (error: any) {
-        res.status(500);
-        res.json({ message: error.stack });
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            res.status(500).json({ message: error.stack });
+        } else {
+            console.error('Unexpected error:', error);
+        }
     }
     res.end();
 
@@ -88,7 +98,7 @@ const edit = async (req: Request, res: Response) => {
 
     try {
 
-        const users = await db.userModel.update({ image_file: image_file, 
+        const users = await models.users.update({ image_file: image_file, 
                                                     username: username, 
                                                     email: email, 
                                                     password: password, 
@@ -103,16 +113,18 @@ const edit = async (req: Request, res: Response) => {
                                                     });
 
         if (users) {
-            res.status(200);
-            res.json({ 'status': true, message: 'Successfully saved.', 'affected_id': id });
+            res.status(200).json({ 'status': true, message: 'Successfully saved.', 'affected_id': id });
         } else {
             res.status(400);
             res.json({ 'status': false, message: "Can't update data." });
         }
 
-    } catch (error: any) {
-        res.status(500);
-        res.json({ message: error.stack });
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            res.status(500).json({ message: error.stack });
+        } else {
+            console.error('Unexpected error:', error);
+        }
     }
     res.end();
 
@@ -124,19 +136,20 @@ const destroy = async (req: Request, res: Response) => {
 
     try {
 
-        const users = await db.userModel.delete({ where: { id: id } });
+        const users = await models.users.delete({ where: { id: id } });
 
         if (users) {
-            res.status(200);
-            res.json({ 'status': true, message: 'Successfully deleted.', 'affected_id': id });
+            res.status(200).json({ 'status': true, message: 'Successfully deleted.', 'affected_id': id });
         } else {
-            res.status(400);
-            res.json({ 'status': false, message: "Can't delete data." });
+            res.status(400).json({ 'status': false, message: "Can't delete data." });
         }
 
-    } catch (error: any) {
-        res.status(500);
-        res.json({ message: error.stack });
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            res.status(500).json({ message: error.stack });
+        } else {
+            console.error('Unexpected error:', error);
+        }
     }
     res.end();
 

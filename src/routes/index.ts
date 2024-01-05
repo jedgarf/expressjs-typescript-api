@@ -1,8 +1,9 @@
 import usersRoutes from './userRoutes';
+import authRoutes from './authRoutes';
 
 const combinedRoutes = {
   users: usersRoutes,
-  // Add more route sections as needed
+  auth: authRoutes
 };
 
 export default combinedRoutes;

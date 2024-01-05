@@ -1,4 +1,6 @@
-const userModel = (sequelize: any, Sequelize: any) => {
+import { Sequelize } from 'sequelize';
+
+const userModel = (sequelize: Sequelize, Sequelize: any) => {
     const Users = sequelize.define("users", {
         created_at: {
             type: 'TIMESTAMP',
@@ -40,7 +42,9 @@ const userModel = (sequelize: any, Sequelize: any) => {
         },
         first_name: {
             type: Sequelize.STRING,
-            notEmpty: true,
+            validate: {
+                notEmpty: true,
+            }
         },
         last_name: {
             type: Sequelize.STRING,

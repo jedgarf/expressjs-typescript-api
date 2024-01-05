@@ -1,16 +1,15 @@
-import express from "express";
+import express, { Router } from "express";
 
 // Controllers
-import * as userControllers from '../controllers/userControllers';
-
+import controllers from '../controllers';
 // Middlewares
-import userFormValidation from '../middlewares/userFormValidation';
+import middlewares from '../middlewares';
 
-const router = express.Router();
+const router: Router = express.Router();
 
-router.post('/create', userFormValidation, userControllers.add);
-router.get('/read/:id?', userControllers.show);
-router.put('/update/:id', userFormValidation, userControllers.edit);
-router.delete('/delete/:id', userControllers.destroy);
+router.post('/create', middlewares.jwtValidation, middlewares.userFormValidation, controllers.users.add);
+router.get('/read/:id?', middlewares.jwtValidation, controllers.users.show);
+router.put('/update/:id', middlewares.jwtValidation, middlewares.userFormValidation, controllers.users.edit);
+router.delete('/delete/:id', middlewares.jwtValidation, controllers.users.destroy);
 
 export default router;
