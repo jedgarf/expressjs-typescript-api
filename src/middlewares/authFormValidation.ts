@@ -13,7 +13,7 @@ const authFormValidation = (req: Request, res: Response, next: NextFunction) => 
   
     if (error) {
         // Collect all validation errors
-        const errors = error.details.map((err) => err.message);
+        const errors: string[] = error.details.map((err) => err.message);
         return res.status(400).json({ status: false, errors });
     }
   

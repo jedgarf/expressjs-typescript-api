@@ -40,6 +40,6 @@ app.use((err: Error, req: Request, res: Response) => {
     res.status(400).json({ error: err.stack });
 });
 
-const port: string | number = process.env.PORT || 3000;
+const port: string | number = process.env.PORT || 3050;
 app.listen(port, () => { console.log(`Server running on port ${port}`); });
   

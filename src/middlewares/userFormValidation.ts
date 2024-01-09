@@ -3,7 +3,6 @@ import * as Joi from 'joi';
 
 // Data Validations
 const userSchema = Joi.object({
-    image_file: Joi.string(),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
     first_name: Joi.string().min(2).required(),

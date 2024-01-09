@@ -7,7 +7,7 @@ import { comparePasswords } from '../utils/passwordUtils';
 // Models
 import models from '../models';
 
-const login = async (req: Request, res: Response) => {
+const login = async (req: Request, res: Response): Promise<void> => {
     
     const email: string = req.body.email;
     const password: string = req.body.password;
@@ -50,7 +50,7 @@ const login = async (req: Request, res: Response) => {
     res.end();
 }
 
-const logout = async (req: Request, res: Response) => {
+const logout = (req: Request, res: Response): void => {
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
     res.status(200).json({ status: true, message: "User blog-out." });

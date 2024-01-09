@@ -4,9 +4,18 @@ import { hashPassword } from '../utils/passwordUtils';
 // Models
 import models from '../models';
 
-const add = async (req: Request, res: Response) => {
+interface saveUserTypes {
+    username: string;
+    email: string;
+    password: string;
+    first_name: string;
+    last_name: string;
+    birth_date: string;
+    is_active: string;
+}
 
-    const image_file: string = req.body.image_file;
+const add = async (req: Request, res: Response): Promise<void> => {
+
     const username: string = req.body.username;
     const email: string = req.body.email;
     const password: string = req.body.password;
@@ -19,15 +28,17 @@ const add = async (req: Request, res: Response) => {
 
     try {
 
-        const users = await models.users.create({ image_file: image_file, 
-                                                    username: username, 
-                                                    email: email, 
-                                                    password: hashedPassword, 
-                                                    first_name: first_name, 
-                                                    last_name: last_name, 
-                                                    birth_date: birth_date, 
-                                                    is_active: is_active }, 
-                                                { fields: ['image_file', 'username', 'email', 'password', 'first_name', 'last_name', 'birth_date', 'is_active'] });
+        const insertData: saveUserTypes = { username: username, 
+                                            email: email, 
+                                            password: hashedPassword, 
+                                            first_name: first_name, 
+                                            last_name: last_name, 
+                                            birth_date: birth_date, 
+                                            is_active: is_active };
+        
+        const insertFields = { fields: ['username', 'email', 'password', 'first_name', 'last_name', 'birth_date', 'is_active'] };
+
+        const users = await models.users.create(insertData, insertFields);
 
         if (users) {
             res.status(201).json({ 'status': true, message: 'Successfully added.', 'inserted_id': users.id });
@@ -46,7 +57,7 @@ const add = async (req: Request, res: Response) => {
 
 }
 
-const show = async (req: Request, res: Response) => {
+const show = async (req: Request, res: Response): Promise<void> => {
     
     const id: number = parseInt(req.params.id);
     const is_active: string = req.query.is_active?.toString() || '1';
@@ -83,11 +94,9 @@ const show = async (req: Request, res: Response) => {
 
 }
 
-const edit = async (req: Request, res: Response) => {
+const edit = async (req: Request, res: Response): Promise<void> => {
 
     const id: number = parseInt(req.params.id);
-
-    const image_file: string = req.body.image_file;
     const username: string = req.body.username;
     const email: string = req.body.email;
     const password: string = req.body.password;
@@ -98,19 +107,15 @@ const edit = async (req: Request, res: Response) => {
 
     try {
 
-        const users = await models.users.update({ image_file: image_file, 
-                                                    username: username, 
-                                                    email: email, 
-                                                    password: password, 
-                                                    first_name: first_name, 
-                                                    last_name: last_name, 
-                                                    birth_date: birth_date, 
-                                                    is_active: is_active }, 
-                                                    {
-                                                        where: {
-                                                          id: id
-                                                        }
-                                                    });
+        const updateData: saveUserTypes = { username: username, 
+                                            email: email, 
+                                            password: password, 
+                                            first_name: first_name, 
+                                            last_name: last_name, 
+                                            birth_date: birth_date, 
+                                            is_active: is_active };
+
+        const users = await models.users.update(updateData, { where: { id: id } });
 
         if (users) {
             res.status(200).json({ 'status': true, message: 'Successfully saved.', 'affected_id': id });
@@ -130,7 +135,7 @@ const edit = async (req: Request, res: Response) => {
 
 }
 
-const destroy = async (req: Request, res: Response) => {
+const destroy = async (req: Request, res: Response): Promise<void> => {
 
     const id: number = parseInt(req.params.id);
 

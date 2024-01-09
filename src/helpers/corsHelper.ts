@@ -9,7 +9,7 @@ type corsConfigTypes = {
 }
 
  const corsConfig: corsConfigTypes = {
-    origin: (origin: string, callback: any) => {
+    origin: (origin: string, callback: any): void => {
       if (process.env.NODE_ENV === 'PRODUCTION') {
         if (allowedOriginsArray.indexOf(origin) !== -1 || !origin) {
           callback(null, true);
